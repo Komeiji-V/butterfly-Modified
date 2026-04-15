@@ -16,6 +16,7 @@
     flex: 0 0 250px !important; /* 禁止放大或缩小，固定为 250px */
     margin: 0 !important;    
     padding: 0 !important;   
+    align-self: stretch !important; /* 修复：强制侧边栏高度与主体拉齐，恢复目录滚动跟随 */
 }
 
 /* 阶段 A：屏幕足够大时，使用固定间距和自适应宽度 */
