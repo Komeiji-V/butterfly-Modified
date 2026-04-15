@@ -1,37 +1,33 @@
 #aside-content.aside-content
-  //- 无论如何，强制把公告栏渲染在第一个
+  //- 强制公告栏第一
   if theme.aside.card_announcement && theme.aside.card_announcement.enable
     !=partial('includes/widget/card_announcement', {}, {cache: true})
-  //- post
+  
   if globalPageType === 'post'
     - const tocStyle = page.toc_style_simple
     - const tocStyleVal = tocStyle === true || tocStyle === false ? tocStyle : theme.toc.style_simple
     if showToc && tocStyleVal
       .sticky_layout
         include ./card_post_toc.pug
-    else
-      !=partial('includes/widget/card_author', {}, {cache: true})
+    else 
+      //- 插入集成卡片
+      !=partial('includes/widget/card_integrated', {}, {cache: true})
       !=partial('includes/widget/card_top_self', {}, {cache: true})
       .sticky_layout
         if showToc
           include ./card_post_toc.pug
-        if page.series
-          include ./card_post_series.pug
         !=partial('includes/widget/card_recent_post', {}, {cache: true})
         !=partial('includes/widget/card_ad', {}, {cache: true})
   else
-    //- page
-    !=partial('includes/widget/card_author', {}, {cache: true})
-    !=partial('includes/widget/card_top_self', {}, {cache: true})
-
     .sticky_layout
+      //- 插入集成卡片，并将首页集成卡片移入粘性布局内部
+      !=partial('includes/widget/card_integrated', {}, {cache: true})
+      !=partial('includes/widget/card_top_self', {}, {cache: true})
       if showToc
         include ./card_post_toc.pug
       !=partial('includes/widget/card_recent_post', {}, {cache: true})
       !=partial('includes/widget/card_ad', {}, {cache: true})
       !=partial('includes/widget/card_newest_comment', {}, {cache: true})
-      !=partial('includes/widget/card_categories', {}, {cache: true})
-      !=partial('includes/widget/card_tags', {}, {cache: true})
-      !=partial('includes/widget/card_archives', {}, {cache: true})
       !=partial('includes/widget/card_webinfo', {}, {cache: true})
       !=partial('includes/widget/card_bottom_self', {}, {cache: true})
+      //- 原有的 categories, tags, archives 已被删除，避免下方重复出现

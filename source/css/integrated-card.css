@@ -1,0 +1,88 @@
+/* ========== 集成卡片标签页样式 ========== */
+.custom-integrated-card .card-widget {
+    margin: 0 !important;
+    padding: 0 !important;
+}
+.custom-integrated-card {
+    padding: 10px !important;
+    overflow: hidden;
+}
+
+/* 导航条 */
+.integrated-tabs-nav {
+    display: flex;
+    margin-bottom: 20px;
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: 8px;
+    padding: 4px;
+}
+[data-theme="dark"] .integrated-tabs-nav {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.int-tab-btn {
+    flex: 1;
+    padding: 8px 0;
+    background: transparent !important;
+    border: none;
+    cursor: pointer;
+    font-size: 1.05em;
+    font-weight: bold;
+    color: var(--font-color);
+    border-radius: 6px;
+    outline: none;
+    transition: all 0.3s ease;
+}
+.int-tab-btn.active {
+    background-color: rgba(0, 0, 0, 0.1) !important;
+    color: #000000 !important;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+[data-theme="dark"] .int-tab-btn.active {
+    background-color: rgba(255, 255, 255, 0.15) !important;
+    color: #ffffff !important;
+}
+
+/* 内容切换动画 */
+.integrated-tab-content {
+    display: none;
+    animation: tabFadeIn 0.3s ease;
+}
+.integrated-tab-content.active {
+    display: block;
+}
+@keyframes tabFadeIn {
+    from { opacity: 0; transform: translateY(5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* 第二页滚动区域 */
+.explore-scroll-area {
+    max-height: 600px;
+    overflow-y: auto;
+    padding-right: 8px;
+}
+.explore-scroll-area .card-widget {
+    padding-bottom: 20px !important;
+    margin-bottom: 20px !important;
+}
+.explore-scroll-area .card-widget:last-child {
+    padding-bottom: 0 !important;
+    margin-bottom: 0 !important;
+}
+.explore-scroll-area .item-headline {
+    font-size: 1.15em;
+    font-weight: bold;
+}
+
+/* 滚动条样式（修正颜色值） */
+.explore-scroll-area::-webkit-scrollbar {
+    width: 5px;
+}
+.explore-scroll-area::-webkit-scrollbar-thumb {
+    background: #49b1f5; 
+    border-radius: 5px;
+}
+.explore-scroll-area::-webkit-scrollbar-track {
+    background: transparent;
+}

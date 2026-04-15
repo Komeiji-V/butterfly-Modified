@@ -1,0 +1,99 @@
+/* =======================
+   文章卡片内部头部信息美化
+   ======================= */
+#page-header.post-bg #post-info {
+    text-align: center;
+    /* 添加文字阴影，防止背景图过亮导致文字看不清 */
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.6); 
+}
+
+#page-header.post-bg #site-title {
+    font-size: 3em;      /* 博客标题大小 */
+    font-weight: bold;
+    color: #ffffff; 
+    margin-bottom: 10px;
+}
+
+#page-header.post-bg #site-subtitle {
+    font-size: 1.5em;    /* 打字机副标题大小 */
+    color: #eeeeee;
+}
+
+/* 缩减包含顶部横幅的高度，让卡片更靠上 */
+#page-header.post-bg {
+    height: 300px !important; 
+}
+
+/*  卡片内头部信息总容器  */
+.post-info-in-card {
+    text-align: left;        /* 左对齐 */
+    margin-bottom: 2rem;     
+    padding-bottom: 1rem;    
+    border-bottom: 1px dashed var(--light-grey); 
+}
+
+/* 暗色模式下的分割线颜色 */
+[data-theme="dark"] .post-info-in-card {
+    border-bottom-color: var(--dark-grey);
+}
+
+/* 主标题样式 */
+.post-info-in-card .post-title {
+    font-size: 2.2em;
+    font-weight: bold;
+    color: var(--font-color); 
+    margin-top: 0;
+    margin-bottom: 0.5rem; /* 为副标题留点间距 */
+    line-height: 1.4;
+}
+
+/* 副标题样式 */
+.post-subtitle {
+    font-size: 1.8em;
+    color: var(--theme-meta-color, #000000);
+    margin-bottom: 1.2rem; /* 与下方拉开距离 */
+    line-height: 1.5;
+    font-weight: 500;
+}
+
+/* 适配夜间模式 */
+[data-theme="dark"] .post-subtitle {
+    color: #bababb !important;
+}
+
+/* 元信息容器（日期、分类、字数等） */
+.post-meta-container {
+    font-size: 90%;
+    color: var(--theme-meta-color, #858585); 
+    display: flex;
+    flex-direction: column; 
+    align-items: flex-start; /* 垂直排列时，确保每一行靠左 */
+    gap: 8px; 
+}
+
+.meta-firstline, .meta-secondline {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start; /* 每一行内的元素靠左排列 */
+    align-items: center;
+    gap: 5px;
+}
+
+.post-meta-container i {
+    margin-right: 4px;
+}
+
+.post-meta-separator {
+    margin: 0 5px;
+    color: #ccc; 
+}
+
+/* 移动端适配：标题字号稍微缩小 */
+@media screen and (max-width: 768px) {
+    .post-info-in-card .post-title {
+        font-size: 1.6em;
+    }
+    .post-subtitle {
+        font-size: 1.4em;
+    }
+}

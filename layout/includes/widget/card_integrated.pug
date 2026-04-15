@@ -1,0 +1,149 @@
+.card-widget.custom-integrated-card
+  //- 顶部 Tab 切换按钮
+  .integrated-tabs-nav
+    button.int-tab-btn.active(onclick="switchIntTab('int-author', this)") 站点概览
+    button.int-tab-btn(onclick="switchIntTab('int-explore', this)") 更多
+  
+  //- 第一页：原版作者信息
+  .integrated-tab-content#int-author.active
+    //- 调用原版作者卡片
+    !=partial('includes/widget/card_author', {}, {cache: true})
+  
+  //- 第二页：分类、标签、归档集成 (带滚动条)
+  .integrated-tab-content#int-explore
+    .explore-scroll-area
+      
+      //- -日历组件-开始
+      .explore-calendar-widget
+        .cal-header
+          i.fas.fa-angle-left#cal-prev
+          span#cal-title
+          i.fas.fa-angle-right#cal-next
+        .cal-weekdays
+          span 日
+          span 一
+          span 二
+          span 三
+          span 四
+          span 五
+          span 六
+        .cal-days#cal-days
+        //- 提取 Hexo 所有文章的日期供前端 JS 使用
+        - var postDatesArray = site.posts.map(function(p){ return p.date.format('YYYY-MM-DD'); })
+        script.
+          window.hexoPostDates = !{JSON.stringify(postDatesArray)};
+      //- 日历组件-结束
+
+      if theme.aside.card_categories && theme.aside.card_categories.enable
+        !=partial('includes/widget/card_categories', {}, {cache: true})
+      if theme.aside.card_tags && theme.aside.card_tags.enable
+        !=partial('includes/widget/card_tags', {}, {cache: true})
+      if theme.aside.card_archives && theme.aside.card_archives.enable
+        !=partial('includes/widget/card_archives', {}, {cache: true})
+      //- 修复报错关键：加上 page.series 判断，防止在首页渲染导致空指针崩溃
+      if theme.aside.card_post_series && theme.aside.card_post_series.enable && page.series
+        !=partial('includes/widget/card_post_series', {}, {cache: true})
+
+//- 插入的 JS 切换逻辑
+script.
+  function switchIntTab(tabId, btn) {
+    var card = btn.closest('.custom-integrated-card');
+    // 清除旧的激活状态
+    card.querySelectorAll('.int-tab-btn').forEach(function(el) { el.classList.remove('active'); });
+    card.querySelectorAll('.integrated-tab-content').forEach(function(el) { el.classList.remove('active'); });
+    // 添加新的激活状态
+    btn.classList.add('active');
+    card.querySelector('#' + tabId).classList.add('active');
+  }
+  
+//- 插入配套的 JS 切换逻辑与日历生成逻辑
+script.
+  // 1. 原有的 Tab 切换函数
+  function switchIntTab(tabId, btn) {
+    var card = btn.closest('.custom-integrated-card');
+    card.querySelectorAll('.int-tab-btn').forEach(function(el) { el.classList.remove('active'); });
+    card.querySelectorAll('.integrated-tab-content').forEach(function(el) { el.classList.remove('active'); });
+    btn.classList.add('active');
+    card.querySelector('#' + tabId).classList.add('active');
+  }
+
+  // 日历生成逻辑
+  function initSidebarCalendar() {
+    var daysContainer = document.getElementById('cal-days');
+    if(!daysContainer) return;
+
+    var today = new Date();
+    var currentMonth = today.getMonth();
+    var currentYear = today.getFullYear();
+    var postDates = window.hexoPostDates || [];
+
+    function renderCalendar(year, month) {
+      daysContainer.innerHTML = '';
+      document.getElementById('cal-title').innerText = year + '年 ' + (month + 1) + '月';
+
+      var firstDay = new Date(year, month, 1).getDay();
+      var daysInMonth = new Date(year, month + 1, 0).getDate();
+
+      // 填充前面的空白
+      for (var i = 0; i < firstDay; i++) {
+        var emptyDiv = document.createElement('div');
+        emptyDiv.className = 'cal-day empty';
+        daysContainer.appendChild(emptyDiv);
+      }
+
+      // 填充日期
+      for (var i = 1; i <= daysInMonth; i++) {
+        // 格式化为 YYYY-MM-DD
+        var mm = (month + 1).toString().padStart(2, '0');
+        var dd = i.toString().padStart(2, '0');
+        var dateStr = year + '-' + mm + '-' + dd;
+        
+        var isPost = postDates.includes(dateStr);
+
+        // 修复：如果是发文日，直接创建 a 标签作为格子；否则创建 div
+        var dayDiv = document.createElement(isPost ? 'a' : 'div');
+        dayDiv.className = 'cal-day';
+        dayDiv.innerText = i;
+
+        if (isPost) {
+          dayDiv.href = '/archives/' + year + '/' + mm + '/' + dd + '/';
+          dayDiv.classList.add('has-post');
+          dayDiv.title = "点击查看当天文章"; 
+        }
+        
+        // 标记今天
+        if (year === today.getFullYear() && month === today.getMonth() && i === today.getDate()) {
+          dayDiv.classList.add('is-today');
+        }
+
+        daysContainer.appendChild(dayDiv);
+      }
+    }
+
+    renderCalendar(currentYear, currentMonth);
+
+    // 绑定翻页按钮 (防止重复绑定，先克隆替换)
+    var btnPrev = document.getElementById('cal-prev');
+    var btnNext = document.getElementById('cal-next');
+    var newPrev = btnPrev.cloneNode(true);
+    var newNext = btnNext.cloneNode(true);
+    btnPrev.parentNode.replaceChild(newPrev, btnPrev);
+    btnNext.parentNode.replaceChild(newNext, btnNext);
+
+    newPrev.addEventListener('click', function() {
+      currentMonth--;
+      if (currentMonth < 0) { currentMonth = 11; currentYear--; }
+      renderCalendar(currentYear, currentMonth);
+    });
+
+    newNext.addEventListener('click', function() {
+      currentMonth++;
+      if (currentMonth > 11) { currentMonth = 0; currentYear++; }
+      renderCalendar(currentYear, currentMonth);
+    });
+  }
+
+  // 初始执行一次
+  initSidebarCalendar();
+  // 适配 PJAX 无刷新加载
+  document.addEventListener('pjax:complete', initSidebarCalendar);

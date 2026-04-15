@@ -1,0 +1,29 @@
+/* ====================
+   顶部导航栏菜单排布优化
+   ==================== */
+
+/* 阶段 A：屏幕足够大时 (≥ 1600px)，对应 width: 85% 及 max-width: 1350px */
+@media screen and (min-width: 1600px) {
+    #nav {
+        /* 数学公式：100% 减去 75% 剩 25%，单边 12.5%。
+           当屏幕宽度极大触发 max-width(1350px) 限制时，取 (100% - 1350px) / 2。
+           使用 max() 函数可在这两者间自动平滑切换！ */
+        padding: 0 calc(max(12.5%, (100% - 1350px) / 2)) !important; 
+    }
+}
+
+/* 阶段 B：屏幕开始缩小 (1200px - 1599px)，对应 width: 90% 及主题默认 max-width: 1200px */
+@media screen and (min-width: 1200px) and (max-width: 1599px) {
+    #nav {
+        /* 单边内边距 5%，或者主题限制的 (100% - 1200px) / 2 */
+        padding: 0 calc(max(5%, (100% - 1200px) / 2)) !important;
+    }
+}
+
+/* 阶段 C：屏幕较小 (900px - 1199px)，对应 width: 95% */
+@media screen and (min-width: 900px) and (max-width: 1199px) {
+    #nav {
+        /* 单边内边距刚好是 (100% - 95%) / 2 = 2.5% */
+        padding: 0 2.5% !important;
+    }
+}

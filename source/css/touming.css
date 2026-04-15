@@ -76,3 +76,59 @@ div#archive {
   background: rgba(25, 25, 25, 0.9) !important;
   color: #ffffff;
 }
+
+/* =================
+   集成卡片完全透明化
+   ================= */
+
+/* 让整个卡片容器强制半透明 + 毛玻璃 */
+.custom-integrated-card,
+.custom-integrated-card.card-widget,
+#aside-content .custom-integrated-card {
+    background: rgba(255, 255, 255, 0.88) !important;
+    backdrop-filter: blur(5px) saturate(150%) !important;
+    -webkit-backdrop-filter: blur(5px) saturate(150%) !important;
+    border-radius: 8px !important;
+    border: 1px solid rgb(169, 169, 169) !important;
+    box-shadow: none !important;
+}
+
+/* 夜间模式强制覆盖 */
+[data-theme="dark"] .custom-integrated-card,
+[data-theme="dark"] .custom-integrated-card.card-widget,
+[data-theme="dark"] #aside-content .custom-integrated-card {
+    background: rgba(25, 25, 25, 0.88) !important;
+    border-color: #555 !important;
+}
+
+/* 如果 .custom-integrated-card 被包裹在 #aside-content .card-widget 内，父级也要透明 */
+#aside-content .card-widget:has(.custom-integrated-card) {
+    background: transparent !important;
+    backdrop-filter: none !important;
+    border: none !important;
+    padding: 0 !important;
+}
+
+/* 兼容不支持 :has() 的浏览器，干脆直接覆盖所有父级可能有的背景 */
+#aside-content .card-widget .custom-integrated-card {
+    margin: 0 !important;
+}
+
+/* 内部卡片元素绝对透明，防止白色实块 */
+.custom-integrated-card .card-widget,
+.custom-integrated-card .recent-post-item,
+.custom-integrated-card .card-content,
+.custom-integrated-card .item {
+    background: transparent !important;
+    backdrop-filter: none !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+/* 导航栏、按钮样式 */
+.integrated-tabs-nav {
+    background: rgba(0, 0, 0, 0.03) !important;
+}
+[data-theme="dark"] .integrated-tabs-nav {
+    background: rgba(255, 255, 255, 0.03) !important;
+}
