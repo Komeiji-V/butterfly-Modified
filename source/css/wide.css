@@ -1,0 +1,38 @@
+/* 调整侧边栏和主内容间距 */
+.layout > div:first-child {
+  margin-right: 20px !important; /* 增加右侧间距 */
+}
+
+/* 如果是左侧边栏布局 */
+.aside-content {
+  margin-left: 20px !important; /* 增加左侧间距 */
+}
+
+/* 或者统一调整flex容器的间距 */
+.layout {
+  gap: 20px !important; /* 使用gap属性设置间距 */
+}
+
+/* 固定侧边栏宽度 */
+.aside-content {
+  width: 300px !important; /* 设置固定宽度 */
+  flex-shrink: 0; /* 防止侧边栏被压缩 */
+  min-width: 255px; /* 最小宽度 */
+}
+
+/* 调整主内容区宽度 */
+.layout > div:first-child {
+  width: calc(100% - 255px) !important; /* 总宽度减去侧边栏宽度和间距 */
+}
+
+/* 响应式适配 - 移动端恢复100%宽度 */
+@media (max-width: 900px) {
+  .aside-content {
+    width: 100% !important;
+    min-width: auto;
+  }
+  
+  .layout > div:first-child {
+    width: 100% !important;
+  }
+}

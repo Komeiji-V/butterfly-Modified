@@ -1,0 +1,161 @@
+#loading-box
+  .loading-left-bg
+  .loading-right-bg
+  .spinner-box
+    .bagua
+      .bagua-inner
+    .loading-word 少女祈祷中...
+
+script.
+  (()=>{
+    const $loadingBox = document.getElementById('loading-box')
+    const $body = document.body
+    const $spinnerBox = document.querySelector('.spinner-box')
+    
+    const preloader = {
+      endLoading: () => {
+        if ($loadingBox.classList.contains('loaded')) return
+        $body.style.overflow = ''
+        $loadingBox.classList.add('loaded')
+      },
+      initLoading: () => {
+        $body.style.overflow = 'hidden'
+        $loadingBox.classList.remove('loaded')
+        // 移除淡入效果，为下次加载做准备
+        if ($spinnerBox) {
+          $spinnerBox.classList.remove('fade-in')
+        }
+      },
+      fadeInContent: () => {
+        // 添加淡入效果
+        if ($spinnerBox && !$spinnerBox.classList.contains('fade-in')) {
+          $spinnerBox.classList.add('fade-in')
+        }
+      }
+    }
+
+    preloader.initLoading()
+
+    // 函数：检测当前body的背景图是否加载完成
+    function checkBackgroundImage() {
+      return new Promise((resolve) => {
+        // 直接获取当前body的背景图
+        const computedStyle = window.getComputedStyle(document.body)
+        const bgImage = computedStyle.backgroundImage
+        
+        // 提取URL
+        const urlMatch = bgImage.match(/url\(['"]?(.*?)['"]?\)/)
+        
+        // 如果没有背景图，直接返回
+        if (!urlMatch || !urlMatch[1]) {
+          console.log('没有检测到背景图，跳过加载检测')
+          resolve(false)
+          return
+        }
+        
+        const bgUrl = urlMatch[1]
+        console.log('检测到背景图URL:', bgUrl)
+        
+        // 创建Image对象预加载背景图
+        const img = new Image()
+        img.onload = () => {
+          console.log('背景图加载完成')
+          resolve(true)
+        }
+        img.onerror = () => {
+          console.log('背景图加载失败')
+          resolve(false)
+        }
+        img.src = bgUrl
+        
+        if (img.complete) {
+          console.log('背景图已缓存')
+          resolve(true)
+        }
+      })
+    }
+
+    // 主加载逻辑 - 确保至少显示3秒
+    async function startLoading() {
+      // 记录开始时间
+      const startTime = Date.now()
+      const MINIMUM_DISPLAY_TIME = 3000 // 最小显示时间：3秒
+      
+      // 先触发淡入动画（延迟500ms让黑幕先显示）
+      setTimeout(() => {
+        preloader.fadeInContent()
+      }, 500)
+      
+      // 等待DOM加载完成
+      if (document.readyState === 'loading') {
+        await new Promise(resolve => {
+          document.addEventListener('DOMContentLoaded', resolve)
+        })
+      }
+      
+      console.log('DOM加载完成，开始检测背景图')
+      
+      // 等待当前背景图加载
+      const bgLoadResult = await checkBackgroundImage()
+      
+      // 计算已用时间
+      const elapsedTime = Date.now() - startTime
+      const remainingTime = MINIMUM_DISPLAY_TIME - elapsedTime
+      
+      console.log(`背景图检测${bgLoadResult ? '成功' : '失败'}，已用时 ${elapsedTime}ms`)
+      
+      // 如果已经超过3秒，立即结束；否则等待剩余时间
+      if (remainingTime > 0) {
+        console.log(`需要等待额外 ${remainingTime}ms 达到3秒最小显示时间`)
+        await new Promise(resolve => setTimeout(resolve, remainingTime))
+      } else {
+        console.log('已超过3秒最小显示时间，立即结束')
+      }
+      
+      // 结束加载
+      preloader.endLoading()
+    }
+
+    // 启动加载检测
+    startLoading().catch((error) => {
+      console.error('加载检测出错:', error)
+      // 如果出错，至少显示2秒
+      setTimeout(preloader.endLoading, 2000)
+    })
+
+    // 超时保护：8秒后强制结束
+    setTimeout(preloader.endLoading, 8000)
+
+    // PJAX支持
+    if (!{theme.pjax && theme.pjax.enable}) {
+      btf.addGlobalFn('pjaxSend', preloader.initLoading, 'preloader_init')
+      btf.addGlobalFn('pjaxComplete', async () => {
+        // 每次PJAX完成后重新触发淡入效果
+        setTimeout(() => {
+          preloader.fadeInContent()
+        }, 300)
+        
+        // 然后重新检测背景图并至少显示3秒
+        const startTime = Date.now()
+        const MINIMUM_DISPLAY_TIME = 3000
+        
+        try {
+          const bgLoadResult = await checkBackgroundImage()
+          
+          const elapsedTime = Date.now() - startTime
+          const remainingTime = MINIMUM_DISPLAY_TIME - elapsedTime
+          
+          console.log(`PJAX背景图检测${bgLoadResult ? '成功' : '失败'}，已用时 ${elapsedTime}ms`)
+          
+          if (remainingTime > 0) {
+            setTimeout(preloader.endLoading, remainingTime)
+          } else {
+            setTimeout(preloader.endLoading, 300)
+          }
+        } catch (error) {
+          console.error('PJAX背景图检测出错:', error)
+          setTimeout(preloader.endLoading, 300)
+        }
+      }, 'preloader_end')
+    }
+  })()

@@ -1,0 +1,134 @@
+if hexo-config('preloader.enable') && hexo-config('preloader.source') == 1
+  .loading-bg
+    position: fixed
+    z-index: 1000
+    width: 50%
+    height: 100%
+    background-color: #000
+
+  #loading-box
+    .loading-left-bg
+      @extend .loading-bg
+
+    .loading-right-bg
+      @extend .loading-bg
+      right: 0
+
+    .spinner-box
+      position: fixed
+      z-index: 1001
+      display: flex
+      flex-direction: column
+      justify-content: center
+      align-items: center
+      width: 100%
+      height: 100vh
+      
+      /* 初始状态：透明 */
+      opacity: 0
+      transition: opacity 0.5s ease-out 0.1s
+      
+      /* 红白八卦图 */
+      .bagua
+        width: 120px
+        height: 120px
+        position: relative
+        border-radius: 50%
+        background: linear-gradient(to right, #fff 50%, #e74c3c 50%)
+        animation: rotate 3s linear infinite
+        box-shadow: 0 0 20px rgba(231, 76, 60, 0.7)
+        margin-bottom: 40px
+      
+      .bagua::before,
+      .bagua::after
+        content: ''
+        position: absolute
+        border-radius: 50%
+      
+      .bagua::before
+        width: 60px
+        height: 60px
+        top: 0
+        left: 30px
+        background: #e74c3c
+      
+      .bagua::after
+        width: 60px
+        height: 60px
+        bottom: 0
+        left: 30px
+        background: #fff
+      
+      .bagua-inner::before,
+      .bagua-inner::after
+        content: ''
+        position: absolute
+        border-radius: 50%
+        z-index: 1
+      
+      .bagua-inner::before
+        width: 20px
+        height: 20px
+        top: 20px
+        left: 50px
+        background: #fff
+      
+      .bagua-inner::after
+        width: 20px
+        height: 20px
+        bottom: 20px
+        left: 50px
+        background: #e74c3c
+
+      /* 文字样式 */
+      .loading-word
+        position: relative
+        color: #fff
+        font-size: 18px
+        font-weight: bold
+        text-shadow: 
+          0 0 5px #e74c3c,
+          0 0 10px #e74c3c,
+          0 0 15px #e74c3c
+        letter-spacing: 3px
+        text-align: center
+        margin-top: 20px
+        animation: text-glow 2s ease-in-out infinite alternate
+
+      /* 淡入后的状态 */
+      &.fade-in
+        opacity: 1
+
+    &.loaded
+      .loading-left-bg
+        transition: all 1s
+        transform: translate(-100%, 0)
+
+      .loading-right-bg
+        transition: all 1s
+        transform: translate(100%, 0)
+
+      .spinner-box
+        opacity: 0
+        visibility: hidden
+        transition: opacity 0.5s ease, visibility 0.5s ease
+
+  @keyframes rotate
+    0%
+      transform: rotate(0deg)
+    100%
+      transform: rotate(360deg)
+  
+  @keyframes text-glow
+    0%
+      text-shadow: 
+        0 0 5px #e74c3c,
+        0 0 10px #e74c3c,
+        0 0 15px #e74c3c
+      opacity: 0.8
+    100%
+      text-shadow: 
+        0 0 10px #e74c3c,
+        0 0 20px #e74c3c,
+        0 0 30px #e74c3c
+      opacity: 1
