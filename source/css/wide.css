@@ -1,38 +1,88 @@
-/* 调整侧边栏和主内容间距 */
-.layout > div:first-child {
-  margin-right: 20px !important; /* 增加右侧间距 */
+/* =============
+   大屏幕宽屏优化
+   ============= */
+
+/* 基础弹性布局设置 */
+#content-inner.layout {
+    display: flex !important;
+    justify-content: space-between !important; 
+    align-items: flex-start !important;
+    margin: 0 auto !important;
 }
 
-/* 如果是左侧边栏布局 */
-.aside-content {
-  margin-left: 20px !important; /* 增加左侧间距 */
+/* 侧边栏绝对固定宽度 */
+#content-inner.layout > .aside-content {
+    width: 250px !important; /* 侧边栏宽度彻底固定为 250px */
+    flex: 0 0 250px !important; /* 禁止放大或缩小，固定为 250px */
+    margin: 0 !important;    
+    padding: 0 !important;   
 }
 
-/* 或者统一调整flex容器的间距 */
-.layout {
-  gap: 20px !important; /* 使用gap属性设置间距 */
+/* 阶段 A：屏幕足够大时，使用固定间距和自适应宽度 */
+@media screen and (min-width: 1600px) {
+    #content-inner.layout {
+        max-width: 1350px !important; 
+        width: 75% !important;        
+    }
+    
+    #content-inner.layout > div:first-child {
+        /* 主内容宽度 = 100% - 侧边栏(250px) - 固定间距(40px) */
+        width: calc(100% - 290px) !important; 
+        flex: none !important; 
+    }
 }
 
-/* 固定侧边栏宽度 */
-.aside-content {
-  width: 300px !important; /* 设置固定宽度 */
-  flex-shrink: 0; /* 防止侧边栏被压缩 */
-  min-width: 255px; /* 最小宽度 */
+/* 阶段 B：屏幕开始缩小（1200px - 1599px），先挤压间距 */
+@media screen and (min-width: 1200px) and (max-width: 1599px) {
+    #content-inner.layout {
+        width: 90% !important; /* 整体容器稍微放宽，以便有空间挤压 */
+    }
+
+    #content-inner.layout > div:first-child {
+        /* 主内容保持一个相对较大的固定百分比或用 calc 稍微缩小一点间距 */
+        width: calc(100% - 250px - 20px) !important; /* 间距缩小为 20px */
+        flex: none !important;
+    }
 }
 
-/* 调整主内容区宽度 */
-.layout > div:first-child {
-  width: calc(100% - 255px) !important; /* 总宽度减去侧边栏宽度和间距 */
+/* 阶段 C：屏幕较小（900px - 1199px），间距达到极限，开始挤压主内容 */
+@media screen and (min-width: 900px) and (max-width: 1199px) {
+    #content-inner.layout {
+        width: 95% !important; 
+    }
+
+    #content-inner.layout > div:first-child {
+        /* 间距几乎为 0（可以留 10px 缓冲），主内容开始随屏幕缩小 */
+        width: calc(100% - 250px - 10px) !important; 
+        flex: none !important;
+    }
 }
 
-/* 响应式适配 - 移动端恢复100%宽度 */
-@media (max-width: 900px) {
-  .aside-content {
-    width: 100% !important;
-    min-width: auto;
-  }
-  
-  .layout > div:first-child {
-    width: 100% !important;
-  }
+
+/* ===========
+   移动端与平板
+   =========== */
+@media screen and (max-width: 900px) {
+    #content-inner.layout {
+        width: 90% !important;     /* 手机端边缘宽度 */
+        display: block !important; /* 手机端恢复默认区块排版 */
+    }
+    
+    #content-inner.layout > div:first-child {
+        width: 100% !important;
+    }
+
+    #content-inner.layout > .aside-content {
+        width: 100% !important;
+        flex: auto !important; /* 手机端解除弹性固定 */
+        padding: 0 !important;  
+        margin: 0 !important;
+        margin-top: 20px !important; /* 手机端侧边栏掉下去后，距离上方的间距 */
+    }
+
+    .aside-content .card-widget {
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        width: 100% !important;
+    }
 }

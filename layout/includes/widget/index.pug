@@ -1,4 +1,7 @@
 #aside-content.aside-content
+  //- 无论如何，强制把公告栏渲染在第一个
+  if theme.aside.card_announcement && theme.aside.card_announcement.enable
+    !=partial('includes/widget/card_announcement', {}, {cache: true})
   //- post
   if globalPageType === 'post'
     - const tocStyle = page.toc_style_simple
@@ -8,7 +11,6 @@
         include ./card_post_toc.pug
     else
       !=partial('includes/widget/card_author', {}, {cache: true})
-      !=partial('includes/widget/card_announcement', {}, {cache: true})
       !=partial('includes/widget/card_top_self', {}, {cache: true})
       .sticky_layout
         if showToc
@@ -20,7 +22,6 @@
   else
     //- page
     !=partial('includes/widget/card_author', {}, {cache: true})
-    !=partial('includes/widget/card_announcement', {}, {cache: true})
     !=partial('includes/widget/card_top_self', {}, {cache: true})
 
     .sticky_layout

@@ -2,8 +2,80 @@ extends includes/layout.pug
 
 block content
   #post
-    if top_img === false
-      include includes/header/post-info.pug
+    //- === 将文章标题和完整的元信息强制显示在卡片内部 ===
+    .post-info-in-card
+      h1.post-title= page.title || _p('no_title')
+      
+      //- 副标题渲染逻辑
+      if page.subtitle
+        .post-subtitle= page.subtitle
+      
+      .post-meta-container
+        .meta-firstline
+          //- 发布日期
+          span.post-meta-date
+            i.far.fa-calendar-alt.fa-fw.post-meta-icon
+            span.post-meta-label= _p('post.created')
+            time(datetime=date_xml(page.date) title=_p('post.created') + ' ' + full_date(page.date))=date(page.date, config.date_format)
+          
+          //- 更新日期
+          if theme.post_meta.post.updated
+            span.post-meta-date
+              span.post-meta-separator |
+              i.fas.fa-history.fa-fw.post-meta-icon
+              span.post-meta-label= _p('post.updated')
+              time(datetime=date_xml(page.updated) title=_p('post.updated') + ' ' + full_date(page.updated))=date(page.updated, config.date_format)
+              
+          //- 分类 
+          if theme.post_meta.post.categories && page.categories.data.length > 0
+            span.post-meta-categories
+              span.post-meta-separator |
+              each item, index in page.categories.data
+                i.fas.fa-inbox.fa-fw.post-meta-icon
+                a(href=url_for(item.path)).post-meta-categories= item.name
+                if (index < page.categories.data.length - 1)
+                  i.fas.fa-angle-right.post-meta-separator
+
+          //- 标签 
+          if theme.post_meta.post.tags && page.tags.data.length > 0
+            span.post-meta-tags
+              span.post-meta-separator |
+              each item, index in page.tags.data
+                i.fas.fa-tags.fa-fw.post-meta-icon
+                a(href=url_for(item.path)).post-meta-tags= item.name
+                if (index < page.tags.data.length - 1)
+                  span.post-meta-separator ,
+
+        .meta-secondline
+          //- 字数统计 & 阅读时间 (需安装 hexo-wordcount 插件)
+          if theme.wordcount.enable && theme.wordcount.post_wordcount
+            span.post-meta-wordcount
+              i.far.fa-file-word.fa-fw.post-meta-icon
+              span.post-meta-label= _p('post.wordcount') + ':'
+              span.word-count= wordcount(page.content)
+              span.post-meta-separator |
+              i.far.fa-clock.fa-fw.post-meta-icon
+              span.post-meta-label= _p('post.min2read') + ':'
+              span= min2read(page.content) + _p('post.min2read_unit')
+
+          //- 阅读量/访问量 (不蒜子示例)
+          if theme.busuanzi.page_pv
+            span.post-meta-pv.cv-hide
+              span.post-meta-separator |
+              i.far.fa-eye.fa-fw.post-meta-icon
+              span.post-meta-label=_p('post.page_pv') + ':'
+              span#busuanzi_value_page_pv
+
+          //- 评论数 (依赖评论插件)
+          if theme.comments.use
+            span.post-meta-comments
+              span.post-meta-separator |
+              i.fas.fa-comments.fa-fw.post-meta-icon
+              a(href="#post-comment")
+                span.post-meta-label= _p('post.comments') + ':'
+                span.count-comment
+
+    //- === 原有的文章正文容器继续保留在下方 ===
 
     article#article-container.container.post-content
       if theme.noticeOutdate.enable && page.noticeOutdate !== false
