@@ -50,7 +50,7 @@
 /* 副标题样式 */
 .post-subtitle {
     font-size: 1.8em;
-    color: var(--theme-meta-color, #000000);
+    color: var(--theme-meta-color, #4c4948);
     margin-bottom: 1.2rem; /* 与下方拉开距离 */
     line-height: 1.5;
     font-weight: 500;
