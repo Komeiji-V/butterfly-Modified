@@ -1,0 +1,8 @@
+div#runtime {
+    width: fit-content;
+    margin: 0 auto; 
+    color: (--light-grey); 
+    padding: 0 10px;
+    border-radius: 10px;
+    text-align: center; 
+}

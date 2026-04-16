@@ -295,9 +295,10 @@ footer:
     since: 2025
   # Copyright of theme and framework
   copyright:
-    enable: false
-    version: false
-  custom_text:
+    enable: true
+    version: true
+  custom_text: 
+    <div id="runtime"></div>
     苏ICP备2025206218号
 
 # --------------------------------------
@@ -1095,8 +1096,10 @@ inject:
     - <link rel="stylesheet" href="/css/touming.css">   #透明
     - <link rel="stylesheet" href="/css/custom.css">   #标题阴影
     - <link rel="stylesheet" href="/css/wide.css">   #间距
+    - <link rel="stylesheet" href="/css/runtime.css">
     - <link rel="stylesheet" href="/css/touxiangbuzhuan.css" media="defer" onload="this.media='all'">   #头像不转
   bottom:
+    - <script src="/js/runtime.js"></script>
     # - <script src="xxxx"></script>
 
 # CDN Settings

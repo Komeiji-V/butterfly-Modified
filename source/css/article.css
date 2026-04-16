@@ -1,22 +1,16 @@
 /* =======================
    文章卡片内部头部信息美化
    ======================= */
-#page-header.post-bg #post-info {
-    text-align: center;
-    /* 添加文字阴影，防止背景图过亮导致文字看不清 */
-    text-shadow: 2px 2px 4px rgba(0,0,0,0.6); 
-}
-
 #page-header.post-bg #site-title {
     font-size: 3em;      /* 博客标题大小 */
     font-weight: bold;
-    color: #ffffff; 
+    color: var(--white); 
     margin-bottom: 10px;
 }
 
 #page-header.post-bg #site-subtitle {
     font-size: 1.5em;    /* 打字机副标题大小 */
-    color: #eeeeee;
+    color: var(--light-grey);
 }
 
 /* 缩减包含顶部横幅的高度，让卡片更靠上 */
@@ -29,12 +23,7 @@
     text-align: left;        /* 左对齐 */
     margin-bottom: 2rem;     
     padding-bottom: 1rem;    
-    border-bottom: 1px dashed var(--light-grey); 
-}
-
-/* 暗色模式下的分割线颜色 */
-[data-theme="dark"] .post-info-in-card {
-    border-bottom-color: var(--dark-grey);
+    border-bottom: 1px dashed var(--dark-grey); 
 }
 
 /* 主标题样式 */
@@ -50,21 +39,16 @@
 /* 副标题样式 */
 .post-subtitle {
     font-size: 1.8em;
-    color: var(--theme-meta-color, #4c4948);
+    color: var(--font-color);
     margin-bottom: 1.2rem; /* 与下方拉开距离 */
     line-height: 1.5;
     font-weight: 500;
 }
 
-/* 适配夜间模式 */
-[data-theme="dark"] .post-subtitle {
-    color: #bababb !important;
-}
-
 /* 元信息容器（日期、分类、字数等） */
 .post-meta-container {
     font-size: 90%;
-    color: var(--theme-meta-color, #858585); 
+    color: var(--dakr-grey); 
     display: flex;
     flex-direction: column; 
     align-items: flex-start; /* 垂直排列时，确保每一行靠左 */

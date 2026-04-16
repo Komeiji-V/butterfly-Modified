@@ -14,6 +14,10 @@
   text-shadow: 0px 0px 2px rgba(0, 0, 0, 1);
 }
 
+.framework-info{
+  text-shadow: 0px 0px 2px rgba(0, 0, 0, 1);
+}
+
 .footer_custom_text {
   text-shadow: 0px 0px 2px rgba(0, 0, 0, 1);
 }
@@ -23,14 +27,14 @@
 /* 修改公告栏背景色并把文字变白 */
 #aside-content .card-announcement {
     background-color: #49B1F5 !important;
-    color: #ffffff !important;
+    color: var(--white) !important;
     border: none !important; /* 去除可能存在的边框 */
 }
 
 /* 强制公告栏标题和内部图标变白 */
 #aside-content .card-announcement .item-headline i,
 #aside-content .card-announcement .item-headline span {
-    color: #ffffff !important;
+    color: var(--white) !important;
 }
 
 /* 适配夜间模式 */
