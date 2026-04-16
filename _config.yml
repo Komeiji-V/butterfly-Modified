@@ -1096,6 +1096,9 @@ inject:
     - <link rel="stylesheet" href="/css/wide.css">   #间距
     - <link rel="stylesheet" href="/css/touxiangbuzhuan.css" media="defer" onload="this.media='all'">   #头像不转
   bottom:
+    - <script>if(saveToLocal.get('theme')===undefined){var s=sessionStorage.getItem('s_theme');if(!s){var h=new Date().getHours();s=(h>=18||h<6)?'dark':'light';sessionStorage.setItem('s_theme',s);}document.documentElement.setAttribute('data-theme',s);}</script>
+    # 进入博客时依据时间强制切换夜间模式，并且离开博客之前保持当前模式
+
     # - <script src="xxxx"></script>
 
 # CDN Settings
