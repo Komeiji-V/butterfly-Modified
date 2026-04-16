@@ -29,6 +29,7 @@
     /* 保证中文字符严格居中对齐 */
     justify-items: center;
     text-align: center;
+    font-weight: bold;
     font-size: 0.85em;
     color: var(--theme-meta-color);
     margin-bottom: 8px;
