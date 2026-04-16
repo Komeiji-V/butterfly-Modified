@@ -26,6 +26,8 @@
 .cal-weekdays {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
+    /* 保证中文字符严格居中对齐 */
+    justify-items: center;
     text-align: center;
     font-size: 0.85em;
     color: var(--theme-meta-color);
@@ -35,6 +37,8 @@
 .cal-days {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
+    /* 保证生成的数字格子严格居中对齐 */
+    justify-items: center; 
     text-align: center;
     gap: 6px 0;
 }
@@ -44,6 +48,8 @@
     width: 28px;
     height: 28px;
     line-height: 28px;
+    /* 确保 a 标签内部的数字也是居中的 */
+    text-align: center; 
     margin: 0 auto;
     border-radius: 6px;
     font-size: 0.9em;
@@ -54,6 +60,13 @@
 .cal-day.is-today:not(.has-post) {
     background: rgba(144, 144, 144, 0.2);
     font-weight: bold;
+}
+
+/* 非本月日期（首尾灰色填充数字）样式 */
+.cal-day.other-month {
+    color: var(--theme-meta-color);
+    opacity: 0.35;
+    pointer-events: none; /* 灰色数字只作展示，不可点击 */
 }
 
 /* 有文章日期的统一高亮 */
@@ -72,4 +85,39 @@
 
 .cal-day.has-post:hover {
     transform: scale(1.15);
+}
+
+/* 底部上/下月快捷跳转导航的排版 */
+.cal-quick-jump {
+    display: flex;
+    justify-content: space-between; /* 保证只有两个元素时靠左右两边分布 */
+    align-items: center;
+    margin-top: 12px;
+    padding: 10px 10px 0;
+    border-top: 1px dashed rgba(144, 144, 144, 0.2);
+}
+
+/* 底部跳转按钮的文本样式 */
+.cal-jump-btn {
+    font-size: 0.85em;
+    padding: 2px 8px;
+    color: #49B1F5;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-weight: bold;
+}
+
+.cal-jump-btn:hover {
+    opacity: 0.7;
+    transform: translateY(-1px);
+}
+
+.cal-jump-btn i {
+    font-size: 0.9em;
+    margin: 0 3px;
+}
+
+/* 关键对齐修复。当一侧没有按钮时，隐藏占位的 span，确保另一侧按钮能被挤到边缘 */
+.cal-quick-jump span:empty {
+    visibility: hidden;
 }

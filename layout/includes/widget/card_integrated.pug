@@ -28,6 +28,8 @@
           span 五
           span 六
         .cal-days#cal-days
+        //- 新增底部跳转容器，用于存放“上一月/下一月”按钮
+        .cal-quick-jump#cal-quick-jump
         //- 提取 Hexo 所有文章的日期供前端 JS 使用
         - var postDatesArray = site.posts.map(function(p){ return p.date.format('YYYY-MM-DD'); })
         script.
@@ -44,7 +46,7 @@
       if theme.aside.card_post_series && theme.aside.card_post_series.enable && page.series
         !=partial('includes/widget/card_post_series', {}, {cache: true})
 
-//- 插入的 JS 切换逻辑
+//- 插入配套的 JS 切换逻辑与日历生成逻辑
 script.
   function switchIntTab(tabId, btn) {
     var card = btn.closest('.custom-integrated-card');
@@ -55,21 +57,11 @@ script.
     btn.classList.add('active');
     card.querySelector('#' + tabId).classList.add('active');
   }
-  
-//- 插入配套的 JS 切换逻辑与日历生成逻辑
-script.
-  // 1. 原有的 Tab 切换函数
-  function switchIntTab(tabId, btn) {
-    var card = btn.closest('.custom-integrated-card');
-    card.querySelectorAll('.int-tab-btn').forEach(function(el) { el.classList.remove('active'); });
-    card.querySelectorAll('.integrated-tab-content').forEach(function(el) { el.classList.remove('active'); });
-    btn.classList.add('active');
-    card.querySelector('#' + tabId).classList.add('active');
-  }
 
   // 日历生成逻辑
   function initSidebarCalendar() {
     var daysContainer = document.getElementById('cal-days');
+    var jumpContainer = document.getElementById('cal-quick-jump'); 
     if(!daysContainer) return;
 
     var today = new Date();
@@ -77,18 +69,64 @@ script.
     var currentYear = today.getFullYear();
     var postDates = window.hexoPostDates || [];
 
+    // 提取所有有文章的月份字符串并排序
+    var activeMonths = [];
+    postDates.forEach(function(d) {
+      var ym = d.substring(0, 7);
+      if (activeMonths.indexOf(ym) === -1) activeMonths.push(ym);
+    });
+    activeMonths.sort();
+
+    // 渲染底部的“上一个/下一个有文章的月份”按钮
+    function renderJumpButtons(y, m) {
+      if (!jumpContainer) return;
+      jumpContainer.innerHTML = '';
+      var currentYM = y + '-' + String(m + 1).padStart(2, '0');
+      
+      var prevYM = null, nextYM = null;
+      for (var i = 0; i < activeMonths.length; i++) {
+        if (activeMonths[i] < currentYM) prevYM = activeMonths[i];
+        if (activeMonths[i] > currentYM) { nextYM = activeMonths[i]; break; }
+      }
+
+      // 渲染左侧：上一个月份
+      if (prevYM) {
+        var p = prevYM.split('-');
+        var btn = document.createElement('span');
+        btn.className = 'cal-jump-btn prev';
+        btn.innerHTML = '<i class="fas fa-angles-left"></i> ' + parseInt(p[1]) + '月';
+        btn.onclick = function() { currentYear = parseInt(p[0]); currentMonth = parseInt(p[1]) - 1; renderCalendar(currentYear, currentMonth); };
+        jumpContainer.appendChild(btn);
+      } else {
+        jumpContainer.appendChild(document.createElement('span')); // 没有上个月时，占位保持右边对齐
+      }
+
+      // 渲染右侧：下一个月份
+      if (nextYM) {
+        var n = nextYM.split('-');
+        var btn = document.createElement('span');
+        btn.className = 'cal-jump-btn next';
+        btn.innerHTML = parseInt(n[1]) + '月 <i class="fas fa-angles-right"></i>';
+        btn.onclick = function() { currentYear = parseInt(n[0]); currentMonth = parseInt(n[1]) - 1; renderCalendar(currentYear, currentMonth); };
+        jumpContainer.appendChild(btn);
+      }
+    }
+
     function renderCalendar(year, month) {
       daysContainer.innerHTML = '';
       document.getElementById('cal-title').innerText = year + '年 ' + (month + 1) + '月';
 
       var firstDay = new Date(year, month, 1).getDay();
       var daysInMonth = new Date(year, month + 1, 0).getDate();
-
-      // 填充前面的空白
-      for (var i = 0; i < firstDay; i++) {
-        var emptyDiv = document.createElement('div');
-        emptyDiv.className = 'cal-day empty';
-        daysContainer.appendChild(emptyDiv);
+      
+      // 获取上个月一共有多少天，为了计算灰色的尾巴日期
+      var prevMonthDays = new Date(year, month, 0).getDate(); 
+      // 用上个月的日期（灰色）补齐第一行的空白
+      for (var i = firstDay - 1; i >= 0; i--) {
+        var div = document.createElement('div');
+        div.className = 'cal-day other-month';
+        div.innerText = prevMonthDays - i;
+        daysContainer.appendChild(div);
       }
 
       // 填充日期
@@ -118,29 +156,34 @@ script.
 
         daysContainer.appendChild(dayDiv);
       }
+
+      // 用下个月的日期补齐最后一行的空白
+      var cellsUsed = firstDay + daysInMonth;
+      if (cellsUsed % 7 !== 0) {
+        for (var i = 1; i <= (7 - cellsUsed % 7); i++) {
+          var div = document.createElement('div');
+          div.className = 'cal-day other-month';
+          div.innerText = i;
+          daysContainer.appendChild(div);
+        }
+      }
+      
+      // 每次渲染完日历，同步更新底部的跳转按钮
+      renderJumpButtons(year, month); 
     }
 
     renderCalendar(currentYear, currentMonth);
 
-    // 绑定翻页按钮 (防止重复绑定，先克隆替换)
-    var btnPrev = document.getElementById('cal-prev');
-    var btnNext = document.getElementById('cal-next');
-    var newPrev = btnPrev.cloneNode(true);
-    var newNext = btnNext.cloneNode(true);
-    btnPrev.parentNode.replaceChild(newPrev, btnPrev);
-    btnNext.parentNode.replaceChild(newNext, btnNext);
-
-    newPrev.addEventListener('click', function() {
-      currentMonth--;
-      if (currentMonth < 0) { currentMonth = 11; currentYear--; }
+    // 绑定翻页按钮
+    document.getElementById('cal-prev').onclick = function() {
+      if (--currentMonth < 0) { currentMonth = 11; currentYear--; }
       renderCalendar(currentYear, currentMonth);
-    });
+    };
 
-    newNext.addEventListener('click', function() {
-      currentMonth++;
-      if (currentMonth > 11) { currentMonth = 0; currentYear++; }
+    document.getElementById('cal-next').onclick = function() {
+      if (++currentMonth > 11) { currentMonth = 0; currentYear++; }
       renderCalendar(currentYear, currentMonth);
-    });
+    };
   }
 
   // 初始执行一次

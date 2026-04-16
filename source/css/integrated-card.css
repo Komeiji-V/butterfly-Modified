@@ -60,7 +60,9 @@
 .explore-scroll-area {
     max-height: 600px;
     overflow-y: auto;
-    padding-right: 8px;
+    scrollbar-gutter: stable;
+    padding-right: 5px;
+    padding-left: 5px;
 }
 .explore-scroll-area .card-widget {
     padding-bottom: 20px !important;
@@ -75,13 +77,13 @@
     font-weight: bold;
 }
 
-/* 滚动条样式（修正颜色值） */
+/* 滚动条样式 */
 .explore-scroll-area::-webkit-scrollbar {
-    width: 5px;
+    width: 3px;
 }
 .explore-scroll-area::-webkit-scrollbar-thumb {
     background: #49b1f5; 
-    border-radius: 5px;
+    border-radius: 3px;
 }
 .explore-scroll-area::-webkit-scrollbar-track {
     background: transparent;
